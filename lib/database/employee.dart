@@ -1,138 +1,150 @@
 // ignore_for_file: constant_identifier_names
 
-class _EmployeeSqlHelper {
-  static const column_uniqueId = "人员识别码";
-  static const column_name = "姓名";
-  static const column_identifyType = "证件类型";
-  static const column_identifyId = "证件号码";
-  static const column_male = "性别";
-  static const column_mobile = "手机";
-  static const column_type = "类型";
-  static const column_birthDay = "生日";
-  static const column_hasSocialSecurity = "缴纳社保";
-  static const column_isJoinUnion = "工会成员";
-  static const column_company = "公司";
-  static const column_departments = "部门";
-  static const column_unionName = "工会";
-  static const column_description = "备注";
+import 'package:desktop_demo/database/message.dart';
+import 'package:desktop_demo/log.dart';
 
-  static const List<String> columns = [
-    column_uniqueId,
-    column_name,
-    column_identifyType,
-    column_identifyId,
-    column_male,
-    column_mobile,
-    column_type,
-    column_birthDay,
-    column_hasSocialSecurity,
-    column_isJoinUnion,
-    column_company,
-    column_departments,
-    column_unionName,
-    column_description
-  ];
-
-  static String buildTableColumns() {
-    StringBuffer buffer = StringBuffer("id INTEGER PRIMARY KEY");
-    for (var element in columns) {
-      buffer.write(",");
-      buffer.write(element + " TEXT");
-    }
-    return buffer.toString();
-  }
-}
-
-class Employee {
-  static String get sqlBuildTableColumns => _EmployeeSqlHelper.buildTableColumns();
-
-  static String get columnUniqueId => _EmployeeSqlHelper.column_uniqueId;
-
-  static String get sqlWhereUniqueId => "$columnUniqueId = ?";
-
-  String name;
-  String identifyType;
-  String identifyId;
-  String male;
-  String mobile;
-  String type;
-  String birthDay;
-  String hasSocialSecurity;
-  String isJoinUnion;
-  String company;
-  String departments;
-  String unionName;
-  String description;
+abstract class DbModel {
   final Map<String, String> _data = {};
 
-  Employee(
-    this.name,
-    this.identifyType,
-    this.identifyId,
-    this.male,
-    this.mobile,
-    this.type,
-    this.birthDay,
-    this.hasSocialSecurity,
-    this.isJoinUnion,
-    this.company,
-    this.departments,
-    this.unionName,
-    this.description,
-  ) {
-    buildData();
+  DbModel.fromJson(Map<String, dynamic>? json) {
+    json?.forEach((key, value) {
+      _data[key] = value.toString();
+    });
   }
 
-  Employee.fromJson(Map<String, dynamic> json)
-      : name = json[_EmployeeSqlHelper.column_name] ?? "",
-        identifyType = json[_EmployeeSqlHelper.column_identifyType] ?? "",
-        identifyId = json[_EmployeeSqlHelper.column_identifyId] ?? "",
-        male = json[_EmployeeSqlHelper.column_male] ?? "",
-        mobile = json[_EmployeeSqlHelper.column_mobile] ?? "",
-        type = json[_EmployeeSqlHelper.column_type] ?? "",
-        birthDay = json[_EmployeeSqlHelper.column_birthDay] ?? "",
-        hasSocialSecurity = json[_EmployeeSqlHelper.column_hasSocialSecurity] ?? "",
-        isJoinUnion = json[_EmployeeSqlHelper.column_isJoinUnion] ?? "",
-        company = json[_EmployeeSqlHelper.column_company] ?? "",
-        departments = json[_EmployeeSqlHelper.column_departments] ?? "",
-        unionName = json[_EmployeeSqlHelper.column_unionName] ?? "",
-        description = json[_EmployeeSqlHelper.column_description] ?? "" {
-    buildData();
+  void set(String key, String value) {
+    _data[key] = value;
+    validFieldValue(key, value);
   }
 
-  void buildData() {
-    _data[_EmployeeSqlHelper.column_uniqueId] = uniqueId;
-    _data[_EmployeeSqlHelper.column_name] = name;
-    _data[_EmployeeSqlHelper.column_identifyType] = identifyType;
-    _data[_EmployeeSqlHelper.column_identifyId] = identifyId;
-    _data[_EmployeeSqlHelper.column_male] = male;
-    _data[_EmployeeSqlHelper.column_mobile] = mobile;
-    _data[_EmployeeSqlHelper.column_type] = type;
-    _data[_EmployeeSqlHelper.column_birthDay] = birthDay;
-    _data[_EmployeeSqlHelper.column_hasSocialSecurity] = hasSocialSecurity;
-    _data[_EmployeeSqlHelper.column_isJoinUnion] = isJoinUnion;
-    _data[_EmployeeSqlHelper.column_company] = company;
-    _data[_EmployeeSqlHelper.column_departments] = departments;
-    _data[_EmployeeSqlHelper.column_unionName] = unionName;
-    _data[_EmployeeSqlHelper.column_description] = description;
+  void validFieldValue(String key, String value);
+
+  String get(String key) => _data[key] ?? "";
+
+  List<String> getValues(List<String> keys) {
+    List<String> values = [];
+    for (var e in keys) {
+      values.add(get(e));
+    }
+    return values;
   }
 
   Map<String, dynamic> toMap() => _data;
 
-  /// unique id for every employee.
-  String get uniqueId => "$name@$mobile@$identifyId";
+  String get uniqueId;
 
   @override
   int get hashCode => uniqueId.hashCode;
 
   @override
-  bool operator ==(other) {
-    if (other is! Employee) {
-      return false;
-    }
-    return name == other.name && (identifyId == other.identifyId || mobile == other.mobile);
-  }
+  bool operator ==(dynamic other) => (other is DbModel) && uniqueId == other.uniqueId;
 
   @override
-  String toString() => _data.toString();
+  String toString() => "\n${_data.toString()}";
+}
+
+mixin IEmployee on DbModel {
+  static const column_name = "姓名";
+  static const column_identifyType = "证件类型";
+  static const column_identifyId = "证件号码";
+  static const column_gender = "性别";
+  static const column_phone = "手机";
+  static const column_type = "类型";
+  static const column_socialSecurity = "社保";
+  static const column_company = "公司";
+  static const column_departments = "部门";
+  static const column_unionName = "工会";
+  static const column_note = "备注";
+
+  static const List<String> columns = [
+    column_name,
+    column_identifyType,
+    column_identifyId,
+    column_gender,
+    column_phone,
+    column_type,
+    column_socialSecurity,
+    column_company,
+    column_departments,
+    column_unionName,
+    column_note
+  ];
+
+  static const _value_genders = ["男", "女"];
+  static const _value_yes_or_no = ["是", "否"];
+  static const _value_work_types = ["正式", "劳务派遣", "借调", "退休返聘", "实习", "其他"];
+  static const _format_phone_length = 11;
+  static const _format_identify_id_length = 18;
+
+  static final _logger = ILog.get("IEmployee");
+
+  @override
+  void validFieldValue(String key, String value) {
+    bool contains(List<dynamic> list, dynamic value) {
+      if (list.contains(list)) return true;
+      _logger.w("${Message.setValueError}, $key:$value, ${list.toString()}");
+      return false;
+    }
+
+    bool checkLength(dynamic value, int exceptValue) {
+      if (value == exceptValue) return true;
+      if (value is String && int.parse(value) == exceptValue) return true;
+      _logger.w("${Message.setValueError}, $key:$value, $exceptValue");
+      return false;
+    }
+
+    if (key == column_gender && contains(_value_genders, value)) {
+      // success
+    } else if (key == column_socialSecurity && contains(_value_yes_or_no, value)) {
+      // success
+    } else if (key == column_type && contains(_value_work_types, value)) {
+      // success
+    } else if (key == column_phone && checkLength(value, _format_phone_length)) {
+      // success
+    } else if (key == column_identifyId && checkLength(value, _format_identify_id_length)) {
+      // success
+    }
+  }
+}
+
+class Employee extends DbModel with IEmployee {
+  Employee.fromJson(Map<String, dynamic> json) : super.fromJson(json);
+
+  Employee.fromValues(List<String> values) : super.fromJson({}) {
+    if (IEmployee.columns.length != values.length) {
+      throw Exception("values length not match columns: ${IEmployee.columns.toString()}");
+    }
+    for (var i = 0; i < IEmployee.columns.length; i++) {
+      set(IEmployee.columns[i], values[i]);
+    }
+  }
+
+  Employee.build(
+    String name,
+    String identifyType,
+    String identifyId,
+    String gender,
+    String phone,
+    String type,
+    String hasSocialSecurity,
+    String company,
+    String departments,
+    String unionName,
+    String note,
+  ) : this.fromValues([
+          name,
+          identifyType,
+          identifyId,
+          gender,
+          phone,
+          type,
+          hasSocialSecurity,
+          company,
+          departments,
+          unionName,
+          note
+        ]);
+
+  @override
+  String get uniqueId => "${get(IEmployee.column_name)}@${get(IEmployee.column_phone)}";
 }

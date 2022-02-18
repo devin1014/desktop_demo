@@ -1,7 +1,9 @@
 // ignore_for_file: avoid_print
 
 import 'package:desktop_demo/database/employee.dart';
+import 'package:desktop_demo/database/message.dart';
 import 'package:desktop_demo/database/result.dart';
+import 'package:desktop_demo/database/sql_helper.dart';
 import 'package:desktop_demo/log.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common/sqlite_api.dart';
@@ -17,9 +19,14 @@ class DatabaseProvider {
     _databaseFuture = _initDatabase();
   }
 
+  /// database file name
   final String _dbFileName = "my_db.db";
-  final String _table = "Employee";
-  final int _version = 1;
+
+  /// database version
+  final int _version = 3;
+
+  /// query employee from database condition: 'name' AND 'mobile'
+  final List<String> _filters = [IEmployee.column_name, IEmployee.column_phone];
   final ILog logger = ILog.get("DatabaseProvider");
   late final Future<Database> _databaseFuture;
 
@@ -31,27 +38,22 @@ class DatabaseProvider {
     return database;
   }
 
-  String get _tableName => "$_table$_version";
+  String get _tableName => "Employee$_version";
 
   OpenDatabaseOptions get _options => OpenDatabaseOptions(
         version: _version,
         onCreate: (database, version) async {
           logger.i("create 'database', version:$version");
-          await database.execute(_createTableSql(_tableName));
+          await database.execute(SqlHelper.createTable(_tableName, IEmployee.columns));
         },
         onUpgrade: (database, oldVersion, newVersion) async {
           logger.i("upgrade 'database', oldVersion:$oldVersion, newVersion:$newVersion");
-          await database.execute(_deleteTableSql("$_table$oldVersion"));
-          await database.execute(_createTableSql(_tableName));
+          await database.execute(SqlHelper.createTable(_tableName, IEmployee.columns));
         },
         onDowngrade: (database, oldVersion, newVersion) async {
           logger.w("downgrade 'database', oldVersion:$oldVersion, newVersion:$newVersion");
         },
       );
-
-  String _createTableSql(String table) => "CREATE TABLE $table (${Employee.sqlBuildTableColumns})";
-
-  String _deleteTableSql(String table) => "DROP TABLE $table";
 
   Future<Result<void>> insert(Employee employee) {
     return _databaseFuture.then((database) async {
@@ -76,8 +78,11 @@ class DatabaseProvider {
   }
 
   Future<bool> _container(Database database, Employee employee) async {
-    List<Map<String, dynamic>> list =
-        await database.query(_tableName, where: Employee.sqlWhereUniqueId, whereArgs: [employee.uniqueId]);
+    List<Map<String, dynamic>> list = await database.query(
+      _tableName,
+      where: SqlHelper.filter(_filters),
+      whereArgs: SqlHelper.values(employee, _filters),
+    );
     return list.isNotEmpty;
   }
 
@@ -85,8 +90,8 @@ class DatabaseProvider {
     return _databaseFuture.then((database) async {
       int rowId = await database.delete(
         _tableName,
-        where: Employee.sqlWhereUniqueId,
-        whereArgs: [employee.uniqueId],
+        where: SqlHelper.filter(_filters),
+        whereArgs: SqlHelper.values(employee, _filters),
       );
       if (rowId > 0) {
         return Result.success(message: "${Message.deleteSuccess}: ${employee.uniqueId}");
@@ -103,8 +108,8 @@ class DatabaseProvider {
       final rowId = await database.update(
         _tableName,
         employee.toMap(),
-        where: Employee.sqlWhereUniqueId,
-        whereArgs: [employee.uniqueId],
+        where: SqlHelper.filter(_filters),
+        whereArgs: SqlHelper.values(employee, _filters),
       );
       if (rowId > 0) {
         return Result.success(message: "${Message.updateSuccess}: ${employee.uniqueId}");

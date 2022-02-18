@@ -2,10 +2,10 @@ import 'dart:math';
 
 import 'package:desktop_demo/database/employee.dart';
 import 'package:desktop_demo/database/provider.dart';
+import 'package:desktop_demo/database/result.dart';
 import 'package:desktop_demo/database/sample_data.dart';
 import 'package:desktop_demo/database/table.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 
 class DatabaseDemo extends StatefulWidget {
   const DatabaseDemo({Key? key}) : super(key: key);
@@ -16,15 +16,16 @@ class DatabaseDemo extends StatefulWidget {
 
 class _DatabaseDemoState extends State<DatabaseDemo> {
   final DatabaseProvider _provider = DatabaseProvider();
-  final Logger _logger = Logger(printer: PrettyPrinter(methodCount: 0, printTime: true));
   final ValueNotifier<List<Employee>> _valueNotifier = ValueNotifier(<Employee>[]);
 
   @override
   void initState() {
     super.initState();
     Future.sync(() async {
-      final employeeSize = (await _provider.query()).data!.length;
-      if (employeeSize == 0) {
+      final result = (await _provider.query()).data!;
+      _valueNotifier.value = result;
+      if (result.isEmpty) {
+        /// test code! when database is empty, insert data
         for (var element in sampleEmployeeList) {
           _provider.insert(element);
         }
@@ -32,7 +33,7 @@ class _DatabaseDemoState extends State<DatabaseDemo> {
     });
   }
 
-  List<String> _filterNames = [];
+  // List<String> _filterNames = [];
 
   @override
   Widget build(BuildContext context) {
@@ -44,34 +45,31 @@ class _DatabaseDemoState extends State<DatabaseDemo> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                TextButton(onPressed: _add, child: const Text("添加人员", style: TextStyle(fontSize: 14))),
-                const SizedBox(height: 16),
-                TextButton(onPressed: _delete, child: const Text("删除人员", style: TextStyle(fontSize: 14))),
-                const SizedBox(height: 16),
-                TextButton(onPressed: _update, child: const Text("更新人员", style: TextStyle(fontSize: 14))),
-                const SizedBox(height: 16),
-                TextButton(
-                    onPressed: () async {
-                      _valueNotifier.value = await _query();
-                      _filterNames = _valueNotifier.value.map((e) => e.name).toList(growable: false);
-                    },
-                    child: const Text("查询人员", style: TextStyle(fontSize: 14))),
-              ],
-            ),
-            const Divider(height: 1.0, color: Colors.grey),
             SizedBox(
-              height: 54,
-              child: DropdownButton<String>(
-                value: "",
-                icon: const Icon(Icons.arrow_drop_down_sharp),
-                onChanged: (newValue) {},
-                items: _filterNames
-                    .map<DropdownMenuItem<String>>((value) => DropdownMenuItem(child: Text(value)))
-                    .toList(),
+              height: 32,
+              child: Row(
+                children: [
+                  TextButton(onPressed: _add, child: const Text("添加人员", style: TextStyle(fontSize: 14))),
+                  TextButton(onPressed: _delete, child: const Text("删除人员", style: TextStyle(fontSize: 14))),
+                  TextButton(onPressed: _update, child: const Text("更新人员", style: TextStyle(fontSize: 14))),
+                  TextButton(
+                      onPressed: () async => _valueNotifier.value = await _query(),
+                      child: const Text("查询人员", style: TextStyle(fontSize: 14))),
+                ],
               ),
             ),
+            const Divider(height: 1.0, color: Colors.grey),
+            // SizedBox(
+            //   height: 54,
+            //   child: DropdownButton<String>(
+            //     value: "",
+            //     icon: const Icon(Icons.arrow_drop_down_sharp),
+            //     onChanged: (newValue) {},
+            //     items: _filterNames
+            //         .map<DropdownMenuItem<String>>((value) => DropdownMenuItem(child: Text(value)))
+            //         .toList(),
+            //   ),
+            // ),
             Expanded(
               child: ValueListenableBuilder<List<Employee>>(
                 valueListenable: _valueNotifier,
@@ -84,17 +82,27 @@ class _DatabaseDemoState extends State<DatabaseDemo> {
     );
   }
 
-  Employee get _employee =>
-      Employee("测试", "身份证", "666", "男", "123456789", "正式", "2000-01-01", "否", "否", "公司", "部门", "工会", "备注");
+  void _add() async {
+    final result = await _provider.insert(testEmployee);
+    if (result.code == ResultCode.success) {
+      _valueNotifier.value = await _query();
+    }
+  }
 
-  void _add() async => await _provider.insert(_employee);
-
-  void _delete() async => await _provider.delete(_employee);
+  void _delete() async {
+    final result = await _provider.delete(testEmployee);
+    if (result.code == ResultCode.success) {
+      _valueNotifier.value = await _query();
+    }
+  }
 
   void _update() async {
-    Employee employee = _employee;
-    employee.description = "description_${Random(DateTime.now().millisecondsSinceEpoch).nextInt(100)}";
-    await _provider.update(employee);
+    Employee employee = testEmployee;
+    employee.set(IEmployee.column_note, "description_${Random(DateTime.now().millisecondsSinceEpoch).nextInt(100)}");
+    final result = await _provider.update(employee);
+    if (result.code == ResultCode.success) {
+      _valueNotifier.value = await _query();
+    }
   }
 
   Future<List<Employee>> _query() async => (await _provider.query()).data!;
