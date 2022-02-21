@@ -20,4 +20,6 @@ class Message {
   static const String setValueError = "设置错误";
   static const String setValueList = "取值范围";
   static const String setValueLength = "长度";
+
+  static const String index = "序号";
 }
