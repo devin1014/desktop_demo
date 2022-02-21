@@ -5,19 +5,24 @@ import 'package:desktop_demo/log.dart';
 
 abstract class DbModel {
   final Map<String, String> _data = {};
+  final List<String> _errKeys = [];
 
   DbModel.fromJson(Map<String, dynamic>? json) {
     json?.forEach((key, value) {
-      _data[key] = value.toString();
+      set(key, value.toString());
     });
   }
 
   void set(String key, String value) {
     _data[key] = value;
-    validFieldValue(key, value);
+    if (validFieldValue(key, value)) {
+      _errKeys.remove(key);
+    } else {
+      _errKeys.add(key);
+    }
   }
 
-  void validFieldValue(String key, String value);
+  bool validFieldValue(String key, String value);
 
   String get(String key) => _data[key] ?? "";
 
@@ -30,6 +35,12 @@ abstract class DbModel {
   }
 
   Map<String, dynamic> toMap() => _data;
+
+  List<String> get invalidFields => _errKeys;
+
+  bool isInvalidField(String name) => _errKeys.contains(name);
+
+  bool get hasInvalidField => _errKeys.isNotEmpty;
 
   String get uniqueId;
 
@@ -50,7 +61,7 @@ mixin IEmployee on DbModel {
   static const column_gender = "性别";
   static const column_phone = "手机";
   static const column_type = "类型";
-  static const column_socialSecurity = "社保";
+  static const column_social = "社保";
   static const column_company = "公司";
   static const column_departments = "部门";
   static const column_unionName = "工会";
@@ -63,7 +74,7 @@ mixin IEmployee on DbModel {
     column_gender,
     column_phone,
     column_type,
-    column_socialSecurity,
+    column_social,
     column_company,
     column_departments,
     column_unionName,
@@ -79,31 +90,31 @@ mixin IEmployee on DbModel {
   static final _logger = ILog.get("IEmployee");
 
   @override
-  void validFieldValue(String key, String value) {
+  bool validFieldValue(String key, String value) {
     bool contains(List<dynamic> list, dynamic value) {
-      if (list.contains(list)) return true;
-      _logger.w("${Message.setValueError}, $key:$value, ${list.toString()}");
+      if (list.contains(value)) return true;
+      _logger.w("${Message.setValueError}, $key:$value, ${Message.setValueList}:${list.toString()}");
       return false;
     }
 
     bool checkLength(dynamic value, int exceptValue) {
-      if (value == exceptValue) return true;
-      if (value is String && int.parse(value) == exceptValue) return true;
-      _logger.w("${Message.setValueError}, $key:$value, $exceptValue");
+      if (value.toString().length == exceptValue) return true;
+      _logger.w("${Message.setValueError}, $key:$value, ${Message.setValueLength}:$exceptValue");
       return false;
     }
 
-    if (key == column_gender && contains(_value_genders, value)) {
-      // success
-    } else if (key == column_socialSecurity && contains(_value_yes_or_no, value)) {
-      // success
-    } else if (key == column_type && contains(_value_work_types, value)) {
-      // success
-    } else if (key == column_phone && checkLength(value, _format_phone_length)) {
-      // success
-    } else if (key == column_identifyId && checkLength(value, _format_identify_id_length)) {
-      // success
+    if (key == column_gender && !contains(_value_genders, value)) {
+      return false;
+    } else if (key == column_social && !contains(_value_yes_or_no, value)) {
+      return false;
+    } else if (key == column_type && !contains(_value_work_types, value)) {
+      return false;
+    } else if (key == column_phone && !checkLength(value, _format_phone_length)) {
+      return false;
+    } else if (key == column_identifyId && !checkLength(value, _format_identify_id_length)) {
+      return false;
     }
+    return true;
   }
 }
 

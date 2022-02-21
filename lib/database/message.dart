@@ -18,4 +18,6 @@ class Message {
   static const String queryFailedEmptyData = "查询失败（没有相关数据）";
 
   static const String setValueError = "设置错误";
+  static const String setValueList = "取值范围";
+  static const String setValueLength = "长度";
 }

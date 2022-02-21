@@ -83,7 +83,7 @@ class _DatabaseDemoState extends State<DatabaseDemo> {
   }
 
   void _add() async {
-    final result = await _provider.insert(testEmployee);
+    final result = await _provider.insert(testErrorEmployee);
     if (result.code == ResultCode.success) {
       _valueNotifier.value = await _query();
     }
@@ -98,7 +98,7 @@ class _DatabaseDemoState extends State<DatabaseDemo> {
 
   void _update() async {
     Employee employee = testEmployee;
-    employee.set(IEmployee.column_note, "description_${Random(DateTime.now().millisecondsSinceEpoch).nextInt(100)}");
+    employee.set(IEmployee.column_note, "#${Random(DateTime.now().millisecondsSinceEpoch).nextInt(100)}");
     final result = await _provider.update(employee);
     if (result.code == ResultCode.success) {
       _valueNotifier.value = await _query();

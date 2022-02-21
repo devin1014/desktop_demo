@@ -35,7 +35,7 @@ List<Employee> sampleEmployeeList = [
 ];
 
 Employee get testEmployee =>
-    Employee.fromValues(["老王", "身份证", "31010020001010xxxx", "男", "x0123456789", "正式", "否", "公司", "部门", "工会", "备注"]);
+    Employee.fromValues(["测试-老王", "身份证", "31010020001010xxxx", "男", "x0123456789", "正式", "否", "公司", "部门", "工会", "备注"]);
 
 Employee get testErrorEmployee =>
-    Employee.fromValues(["小王", "身份证", "31010020001010?", "-", "123456789", "不知道", "-", "公司", "部门", "工会", "备注"]);
+    Employee.fromValues(["测试-小王", "身份证", "666?", "-", "777", "不知道", "-", "公司", "部门", "工会", "备注"]);
