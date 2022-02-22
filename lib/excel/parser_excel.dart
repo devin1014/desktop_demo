@@ -2,7 +2,6 @@
 
 import 'dart:io';
 
-import 'package:desktop_demo/db_demo.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -42,12 +41,6 @@ class _ParserExcelDemoState extends State<ParserExcelDemo> {
           ),
           const SizedBox(height: 16),
           TextButton(onPressed: _parseExcel, child: const Text("选择excel文件", style: TextStyle(fontSize: 16))),
-          const SizedBox(height: 16),
-          TextButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const DatabaseDemo()));
-              },
-              child: const Text("数据库页面", style: TextStyle(fontSize: 16))),
         ],
       ),
     );
