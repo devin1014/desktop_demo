@@ -81,9 +81,10 @@ mixin IEmployee on DbModel {
     column_note
   ];
 
-  static const _value_genders = ["男", "女"];
-  static const _value_yes_or_no = ["是", "否"];
-  static const _value_work_types = ["正式", "劳务派遣", "借调", "退休返聘", "实习", "其他"];
+  static const value_identify_types = ["身份证"];
+  static const value_genders = ["男", "女"];
+  static const value_yes_or_no = ["是", "否"];
+  static const value_work_types = ["正式", "劳务派遣", "借调", "退休返聘", "实习", "其他"];
   static const _format_phone_length = 11;
   static const _format_identify_id_length = 18;
 
@@ -103,11 +104,11 @@ mixin IEmployee on DbModel {
       return false;
     }
 
-    if (key == column_gender && !contains(_value_genders, value)) {
+    if (key == column_gender && !contains(value_genders, value)) {
       return false;
-    } else if (key == column_social && !contains(_value_yes_or_no, value)) {
+    } else if (key == column_social && !contains(value_yes_or_no, value)) {
       return false;
-    } else if (key == column_type && !contains(_value_work_types, value)) {
+    } else if (key == column_type && !contains(value_work_types, value)) {
       return false;
     } else if (key == column_phone && !checkLength(value, _format_phone_length)) {
       return false;

@@ -2,14 +2,17 @@ import 'package:desktop_demo/database/employee.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class TestDropdownButtonDemo extends StatefulWidget {
-  const TestDropdownButtonDemo({Key? key}) : super(key: key);
+/// --------------------------------------------------------
+/// DropdownButton
+/// --------------------------------------------------------
+class DropdownButtonDemo extends StatefulWidget {
+  const DropdownButtonDemo({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _TestDropdownButtonDemoState();
+  State<StatefulWidget> createState() => _DropdownButtonDemoState();
 }
 
-class _TestDropdownButtonDemoState extends State<TestDropdownButtonDemo> {
+class _DropdownButtonDemoState extends State<DropdownButtonDemo> {
   final List<String> items = ["1", "2", "3"];
   String _valueSelected = "1";
 
@@ -45,14 +48,17 @@ class _TestDropdownButtonDemoState extends State<TestDropdownButtonDemo> {
   }
 }
 
-class TestPopupMenuButtonDemo extends StatefulWidget {
-  const TestPopupMenuButtonDemo({Key? key}) : super(key: key);
+/// --------------------------------------------------------
+/// PopupMenuButtonDemo
+/// --------------------------------------------------------
+class PopupMenuButtonDemo extends StatefulWidget {
+  const PopupMenuButtonDemo({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _TestPopupMenuButtonDemoState();
+  State<StatefulWidget> createState() => _PopupMenuButtonDemoState();
 }
 
-class _TestPopupMenuButtonDemoState extends State<TestPopupMenuButtonDemo> {
+class _PopupMenuButtonDemoState extends State<PopupMenuButtonDemo> {
   final List<String> items = ["1", "2", "3"];
 
   @override
@@ -83,20 +89,29 @@ class _TestPopupMenuButtonDemoState extends State<TestPopupMenuButtonDemo> {
   }
 }
 
-class TestTextFieldDemo extends StatefulWidget {
-  const TestTextFieldDemo({Key? key}) : super(key: key);
+/// --------------------------------------------------------
+/// TextFieldDemo
+/// --------------------------------------------------------
+class TextFieldDemo extends StatefulWidget {
+  const TextFieldDemo({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _TestTextFieldDemoState();
+  State<StatefulWidget> createState() => _TextFieldDemoState();
 }
 
-class _TestTextFieldDemoState extends State<TestTextFieldDemo> {
+class _TextFieldDemoState extends State<TextFieldDemo> {
   final TextEditingController _editingController1 = TextEditingController();
   final TextEditingController _editingController2 = TextEditingController();
   final TextEditingController _editingController3 = TextEditingController();
 
   final FocusNode _keyboardFocusNode = FocusNode();
-  final FocusNode _focusNode1 = FocusNode();
+  final FocusNode _focusNode1 = FocusNode(onKey: (FocusNode node, RawKeyEvent event) {
+    print("_focusNode1: ${event.logicalKey.debugName}");
+    return KeyEventResult.ignored;
+  }, onKeyEvent: (node, event) {
+    print("_focusNode1: ${event.logicalKey.debugName}");
+    return KeyEventResult.ignored;
+  });
   final FocusNode _focusNode2 = FocusNode();
   final FocusNode _focusNode3 = FocusNode();
 
@@ -108,7 +123,7 @@ class _TestTextFieldDemoState extends State<TestTextFieldDemo> {
       print("text: $text");
     });
     _keyboardFocusNode.addListener(() {
-      print("focus1: ${_keyboardFocusNode.hasFocus}");
+      print("RawKeyboardListener: ${_keyboardFocusNode.hasFocus}");
     });
   }
 
@@ -125,7 +140,7 @@ class _TestTextFieldDemoState extends State<TestTextFieldDemo> {
         body: RawKeyboardListener(
           focusNode: _keyboardFocusNode,
           onKey: (event) {
-            print("onKey: ${event.logicalKey.keyId}");
+            print("onKey: ${event.logicalKey.debugName}");
             if (event.logicalKey == LogicalKeyboardKey.tab) {
               //TODO
             }

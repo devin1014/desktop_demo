@@ -1,10 +1,21 @@
+import 'package:desktop_demo/database/insert_employee.dart';
 import 'package:desktop_demo/excel/parser_excel.dart';
+import 'package:desktop_demo/routers.dart';
 import 'package:desktop_demo/test_widget.dart';
 import 'package:flutter/material.dart';
 
 import 'db_demo.dart';
 
-void main() => runApp(const MyApp());
+void main() async {
+  Routers().register(Routers.pageEmployee, const EmployeeDatabase());
+  Routers().register(Routers.pageInsert, const InsertEmployeePage());
+  Routers().register(Routers.pageUpdate, const InsertEmployeePage());
+  Routers().register(Routers.pageParserExcel, const ParserExcelDemo());
+  Routers().register(Routers.pageDropdownButton, const DropdownButtonDemo());
+  Routers().register(Routers.pageDropdownMenu, const TextFieldDemo());
+  Routers().register(Routers.pageTextField, const TextFieldDemo());
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -22,31 +33,20 @@ class MyApp extends StatelessWidget {
               child: Column(
                 children: [
                   TextButton(
-                      onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const ParserExcelDemo()));
-                      },
+                      onPressed: () => Routers().push(context, Routers.pageParserExcel),
                       child: const Text("Excel Parser")),
                   TextButton(
-                      onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const DatabaseDemo()));
-                      },
-                      child: const Text("Employee")),
+                    onPressed: () => Routers().push(context, Routers.pageEmployee),
+                    child: const Text("Employee Database"),
+                  ),
                   TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context, MaterialPageRoute(builder: (context) => const TestDropdownButtonDemo()));
-                      },
+                      onPressed: () => Routers().push(context, Routers.pageDropdownButton),
                       child: const Text("DropdownButton")),
                   TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context, MaterialPageRoute(builder: (context) => const TestPopupMenuButtonDemo()));
-                      },
+                      onPressed: () => Routers().push(context, Routers.pageDropdownMenu),
                       child: const Text("PopupMenuButton")),
                   TextButton(
-                      onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const TestTextFieldDemo()));
-                      },
+                      onPressed: () => Routers().push(context, Routers.pageTextField),
                       child: const Text("TextFieldDemo")),
                 ],
               ),

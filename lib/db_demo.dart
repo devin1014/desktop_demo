@@ -2,20 +2,21 @@ import 'dart:math';
 
 import 'package:desktop_demo/database/action_dialog.dart';
 import 'package:desktop_demo/database/employee.dart';
+import 'package:desktop_demo/database/insert_employee.dart';
 import 'package:desktop_demo/database/provider.dart';
 import 'package:desktop_demo/database/result.dart';
 import 'package:desktop_demo/database/sample_data.dart';
 import 'package:desktop_demo/database/table.dart';
 import 'package:flutter/material.dart';
 
-class DatabaseDemo extends StatefulWidget {
-  const DatabaseDemo({Key? key}) : super(key: key);
+class EmployeeDatabase extends StatefulWidget {
+  const EmployeeDatabase({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _DatabaseDemoState();
+  State<StatefulWidget> createState() => _EmployeeDatabaseState();
 }
 
-class _DatabaseDemoState extends State<DatabaseDemo> {
+class _EmployeeDatabaseState extends State<EmployeeDatabase> {
   final DatabaseProvider _provider = DatabaseProvider();
   final ValueNotifier<List<Employee>> _valueNotifier = ValueNotifier(<Employee>[]);
 
@@ -34,8 +35,6 @@ class _DatabaseDemoState extends State<DatabaseDemo> {
     });
   }
 
-  int _addEmployeeIndex = 0;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,12 +51,17 @@ class _DatabaseDemoState extends State<DatabaseDemo> {
                 children: [
                   TextButton(
                       onPressed: () {
-                        if (_addEmployeeIndex % 2 == 0) {
-                          _add(testEmployee);
-                        } else {
-                          _add(testErrorEmployee);
-                        }
-                        _addEmployeeIndex++;
+                        // if (_addEmployeeIndex % 2 == 0) {
+                        //   _add(testEmployee);
+                        // } else {
+                        //   _add(testErrorEmployee);
+                        // }
+                        // _addEmployeeIndex++;
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                              pageBuilder: (context, animation, secondaryAnimation) => const InsertEmployeePage()),
+                        );
                       },
                       child: const Text("添加人员", style: TextStyle(fontSize: 14))),
                   // TextButton(

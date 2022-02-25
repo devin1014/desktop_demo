@@ -29,19 +29,22 @@ class _ParserExcelDemoState extends State<ParserExcelDemo> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          ValueListenableBuilder(
-            valueListenable: _valueNotifier,
-            builder: (context, String value, child) {
-              return Text(value, style: const TextStyle(color: Colors.black, fontSize: 16));
-            },
-          ),
-          const SizedBox(height: 16),
-          TextButton(onPressed: _parseExcel, child: const Text("选择excel文件", style: TextStyle(fontSize: 16))),
-        ],
+    return Scaffold(
+      appBar: AppBar(title: const Text("解析Excel")),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            ValueListenableBuilder(
+              valueListenable: _valueNotifier,
+              builder: (context, String value, child) {
+                return Text(value, style: const TextStyle(color: Colors.black, fontSize: 16));
+              },
+            ),
+            const SizedBox(height: 16),
+            TextButton(onPressed: _parseExcel, child: const Text("选择excel文件", style: TextStyle(fontSize: 16))),
+          ],
+        ),
       ),
     );
   }
