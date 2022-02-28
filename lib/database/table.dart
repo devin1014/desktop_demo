@@ -18,6 +18,7 @@ class EmployeeTable extends StatefulWidget {
 }
 
 class _EmployeeTableState extends State<EmployeeTable> {
+  static const _itemHeight = 36.0;
   final int defaultItemFlex = 2;
   final int defaultItemLongFlex = 5;
   final ValueNotifier<int> _valueNotifier = ValueNotifier(-1);
@@ -51,7 +52,7 @@ class _EmployeeTableState extends State<EmployeeTable> {
         _RowItem(
             tag: "title index row",
             width: 40,
-            height: 30,
+            height: _itemHeight,
             bgColor: Colors.grey.shade50,
             items: const [Message.index],
             flexBuilder: (name) => defaultItemFlex,
@@ -59,7 +60,7 @@ class _EmployeeTableState extends State<EmployeeTable> {
         Expanded(
             child: _RowItem(
                 tag: "title other row",
-                height: 30,
+                height: _itemHeight,
                 bgColor: Colors.grey,
                 items: IEmployee.columns,
                 flexBuilder: _getFlex,
@@ -72,7 +73,7 @@ class _EmployeeTableState extends State<EmployeeTable> {
         itemBuilder: (context, index) => _titleCell(
           name: "$index",
           width: 40,
-          height: 30,
+          height: _itemHeight,
           bgColor: Colors.blueGrey,
         ),
         separatorBuilder: (context, index) => const Divider(height: 1.0, color: Colors.grey),
@@ -110,7 +111,7 @@ class _EmployeeTableState extends State<EmployeeTable> {
               }
               return _RowItem(
                   tag: "$index:${employee.get(IEmployee.column_name)}:$selected:$_lastSelected",
-                  height: 30,
+                  height: _itemHeight,
                   bgColor: selected ? Colors.lightBlue : null,
                   items: IEmployee.columns,
                   flexBuilder: _getFlex,
@@ -120,13 +121,15 @@ class _EmployeeTableState extends State<EmployeeTable> {
                         color: employee.isInvalidField(name) ? Colors.yellow : null,
                         child: Text(
                           employee.get(name),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(color: employee.isInvalidField(name) ? Colors.red : Colors.black),
                         ));
                   });
             },
             child: _RowItem(
                 tag: "$index:${employee.get(IEmployee.column_name)}",
-                height: 30,
+                height: _itemHeight,
                 items: IEmployee.columns,
                 flexBuilder: _getFlex,
                 widgetBuilder: (context, name) {
@@ -135,6 +138,8 @@ class _EmployeeTableState extends State<EmployeeTable> {
                       color: employee.isInvalidField(name) ? Colors.yellow : null,
                       child: Text(
                         employee.get(name),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(color: employee.isInvalidField(name) ? Colors.red : Colors.black),
                       ));
                 }),

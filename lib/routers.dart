@@ -23,8 +23,8 @@ class Routers {
     _routerMap[page] = widget;
   }
 
-  void push(BuildContext context, String page, {Map<String, dynamic>? arguments}) {
-    Navigator.push(
+  Future<dynamic> push(BuildContext context, String page, {Map<String, dynamic>? arguments}) {
+    return Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => _routerMap[page] ?? _notFoundPageBuilder(context, page),

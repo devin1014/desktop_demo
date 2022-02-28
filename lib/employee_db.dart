@@ -2,11 +2,11 @@ import 'dart:math';
 
 import 'package:desktop_demo/database/action_dialog.dart';
 import 'package:desktop_demo/database/employee.dart';
-import 'package:desktop_demo/database/insert_employee.dart';
 import 'package:desktop_demo/database/provider.dart';
 import 'package:desktop_demo/database/result.dart';
 import 'package:desktop_demo/database/sample_data.dart';
 import 'package:desktop_demo/database/table.dart';
+import 'package:desktop_demo/routers.dart';
 import 'package:flutter/material.dart';
 
 class EmployeeDatabase extends StatefulWidget {
@@ -38,7 +38,10 @@ class _EmployeeDatabaseState extends State<EmployeeDatabase> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("DB Demo")),
+      appBar: AppBar(
+        title: const Text("人员信息库"),
+        actions: [_buildToolbarAction(context)],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(0),
         child: Column(
@@ -48,32 +51,7 @@ class _EmployeeDatabaseState extends State<EmployeeDatabase> {
             SizedBox(
               height: 32,
               child: Row(
-                children: [
-                  TextButton(
-                      onPressed: () {
-                        // if (_addEmployeeIndex % 2 == 0) {
-                        //   _add(testEmployee);
-                        // } else {
-                        //   _add(testErrorEmployee);
-                        // }
-                        // _addEmployeeIndex++;
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                              pageBuilder: (context, animation, secondaryAnimation) => const InsertEmployeePage()),
-                        );
-                      },
-                      child: const Text("添加人员", style: TextStyle(fontSize: 14))),
-                  // TextButton(
-                  //     onPressed: () => _delete(testEmployee),
-                  //     child: const Text("删除人员", style: TextStyle(fontSize: 14))),
-                  // TextButton(
-                  //     onPressed: () => _update(testEmployee),
-                  //     child: const Text("更新人员", style: TextStyle(fontSize: 14))),
-                  // TextButton(
-                  //     onPressed: () async => _valueNotifier.value = await _query(),
-                  //     child: const Text("查询人员", style: TextStyle(fontSize: 14))),
-                ],
+                children: [],
               ),
             ),
             const Divider(height: 1.0, color: Colors.grey),
@@ -99,12 +77,43 @@ class _EmployeeDatabaseState extends State<EmployeeDatabase> {
     );
   }
 
-  void _add(Employee employee) async {
-    final result = await _provider.insert(employee);
-    if (result.code == ResultCode.success) {
-      _valueNotifier.value = await _query();
-    }
-  }
+  static const _actionAddEmployee = 1;
+  static const _importExcelFile = 2;
+
+  Widget _buildToolbarAction(BuildContext pageContext) => PopupMenuButton(
+        itemBuilder: (context) {
+          return [
+            const PopupMenuItem(child: Text("添加人员信息"), value: _actionAddEmployee),
+            const PopupMenuItem(child: Text("倒入Excel文件"), value: _importExcelFile),
+          ];
+        },
+        onSelected: (value) {
+          if (value == _actionAddEmployee) {
+            Routers().push(
+              pageContext,
+              Routers.pageInsert,
+              arguments: {"employee": testEmployee},
+            ).then((value) {
+              if (value is Result) {
+                if (value.code == ResultCode.success) {
+                  _refresh();
+                } else {
+                  ScaffoldMessenger.of(pageContext).showSnackBar(SnackBar(content: Text(value.message)));
+                }
+              }
+            });
+          }
+        },
+        iconSize: 32,
+        onCanceled: () {},
+      );
+
+  // void _add(Employee employee) async {
+  //   final result = await _provider.insert(employee);
+  //   if (result.code == ResultCode.success) {
+  //     _valueNotifier.value = await _query();
+  //   }
+  // }
 
   void _delete(Employee employee) async {
     final result = await _provider.delete(employee);
@@ -119,6 +128,10 @@ class _EmployeeDatabaseState extends State<EmployeeDatabase> {
     if (result.code == ResultCode.success) {
       _valueNotifier.value = await _query();
     }
+  }
+
+  void _refresh() async {
+    _valueNotifier.value = await _query();
   }
 
   Future<List<Employee>> _query() async => (await _provider.query()).data!;

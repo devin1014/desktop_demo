@@ -28,6 +28,14 @@ class _InsertEmployeePageState extends State<InsertEmployeePage> {
 
   @override
   Widget build(BuildContext context) {
+    Employee? employee;
+    final argument = ModalRoute.of(context)?.settings.arguments;
+    if (argument != null && argument is Map<String, dynamic>) {
+      final value = argument["employee"];
+      if (value is Employee) {
+        employee = value;
+      }
+    }
     _textFieldKeys.clear();
     return Scaffold(
         appBar: AppBar(title: const Text("新增人员信息")),
@@ -40,23 +48,35 @@ class _InsertEmployeePageState extends State<InsertEmployeePage> {
                   SizedBox(
                       height: 96,
                       child: Row(children: [
-                        _buildTextField(IEmployee.column_name, "请输入名字", validators: [_emptyValueValidator]),
-                        _buildTextField(IEmployee.column_identifyType, "请输入证件类型", validators: [_emptyValueValidator]),
-                        // _buildDropDownButton(IEmployee.value_identify_types),
-                        _buildTextField(IEmployee.column_identifyId, "请输入证件号码", validators: [_identifyIdValidator]),
-                        _buildTextField(IEmployee.column_gender, "男/女", validators: [_emptyValueValidator]),
+                        _buildTextField(IEmployee.column_name, "请输入名字",
+                            defaultValue: employee?.get(IEmployee.column_name), validators: [_emptyValueValidator]),
+                        _buildTextField(IEmployee.column_identifyType, "请输入证件类型",
+                            defaultValue: employee?.get(IEmployee.column_identifyType),
+                            validators: [_emptyValueValidator]),
+                        _buildTextField(IEmployee.column_identifyId, "请输入证件号码",
+                            defaultValue: employee?.get(IEmployee.column_identifyId),
+                            validators: [_identifyIdValidator]),
+                        _buildTextField(IEmployee.column_gender, "男/女",
+                            defaultValue: employee?.get(IEmployee.column_gender), validators: [_emptyValueValidator]),
                         _buildTextField(IEmployee.column_phone, "请输入11位手机号码",
-                            type: TextInputType.phone, validators: [_phoneValidator]),
+                            defaultValue: employee?.get(IEmployee.column_phone),
+                            type: TextInputType.phone,
+                            validators: [_phoneValidator]),
                       ])),
                   SizedBox(
                     height: 96,
                     child: Row(children: [
                       _buildTextField(IEmployee.column_type, "[正式、劳务派遣、退休返聘、借调、实习、其他]",
+                          defaultValue: employee?.get(IEmployee.column_type), validators: [_emptyValueValidator]),
+                      _buildTextField(IEmployee.column_social, "[是/否]",
+                          defaultValue: employee?.get(IEmployee.column_social), validators: [_emptyValueValidator]),
+                      _buildTextField(IEmployee.column_company, "请输入公司名称",
+                          defaultValue: employee?.get(IEmployee.column_company), validators: [_emptyValueValidator]),
+                      _buildTextField(IEmployee.column_departments, "请输入工作部门",
+                          defaultValue: employee?.get(IEmployee.column_departments),
                           validators: [_emptyValueValidator]),
-                      _buildTextField(IEmployee.column_social, "[是/否]", validators: [_emptyValueValidator]),
-                      _buildTextField(IEmployee.column_company, "请输入公司名称", validators: [_emptyValueValidator]),
-                      _buildTextField(IEmployee.column_departments, "请输入工作部门", validators: [_emptyValueValidator]),
-                      _buildTextField(IEmployee.column_unionName, "如参加工会，请填写工会名称"),
+                      _buildTextField(IEmployee.column_unionName, "如参加工会，请填写工会名称",
+                          defaultValue: employee?.get(IEmployee.column_unionName)),
                     ]),
                   ),
                   SizedBox(
@@ -108,7 +128,7 @@ class _InsertEmployeePageState extends State<InsertEmployeePage> {
     _hasErrorField = !globalKey.currentState!.validate() || _hasErrorField;
   }
 
-  void _insertEmployee() {
+  void _insertEmployee() async {
     _hasErrorField = false;
     _textFieldKeys.forEach(validateField);
     final values = _textFieldKeys.map<String>((e) => e.currentState?.value ?? "").toList(growable: false);
@@ -116,7 +136,8 @@ class _InsertEmployeePageState extends State<InsertEmployeePage> {
     if (_hasErrorField) return;
     final employee = Employee.fromValues(values);
     if (!employee.hasInvalidField) {
-      _provider.insert(employee);
+      final result = await _provider.insert(employee);
+      Navigator.of(context).pop(result);
     } else {
       print("invalidFields: ${employee.invalidFields.toString()}");
     }
