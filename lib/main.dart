@@ -1,4 +1,5 @@
 import 'package:desktop_demo/database/insert_employee.dart';
+import 'package:desktop_demo/database/search.dart';
 import 'package:desktop_demo/excel/parser_excel.dart';
 import 'package:desktop_demo/routers.dart';
 import 'package:desktop_demo/test_widget.dart';
@@ -14,6 +15,7 @@ void main() async {
   Routers().register(Routers.pageDropdownButton, const DropdownButtonDemo());
   Routers().register(Routers.pageDropdownMenu, const TextFieldDemo());
   Routers().register(Routers.pageTextField, const TextFieldDemo());
+  Routers().register(Routers.pageSearch, const SearchEmployee());
   runApp(const MyApp());
 }
 

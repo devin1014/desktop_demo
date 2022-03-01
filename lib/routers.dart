@@ -10,7 +10,9 @@ class Routers {
   static const pageEmployee = "pageEmployee";
   static const pageInsert = "pageInsert";
   static const pageUpdate = "pageUpdate";
+  static const pageSearch = "pageSearch";
   static const pageParserExcel = "pageParserExcel";
+
   static const pageDropdownButton = "pageDropdownButton";
   static const pageDropdownMenu = "pageDropdownMenu";
   static const pageTextField = "pageTextField";

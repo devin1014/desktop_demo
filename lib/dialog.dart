@@ -35,4 +35,11 @@ class DialogUtil {
           child: Text(data, style: const TextStyle(fontSize: 14)),
         ));
   }
+
+  static Future<dynamic> showCustomDialog(BuildContext pageContext, Widget content) async {
+    return await showDialog(
+      context: pageContext,
+      builder: (context) => Dialog(child: content),
+    );
+  }
 }

@@ -14,22 +14,35 @@ class EmployeeTable extends StatefulWidget {
   final Callback callback;
 
   @override
-  State<EmployeeTable> createState() => _EmployeeTableState();
+  State<EmployeeTable> createState() => EmployeeTableState();
 }
 
-class _EmployeeTableState extends State<EmployeeTable> {
+class EmployeeTableState extends State<EmployeeTable> {
   static const _itemHeight = 36.0;
   final int defaultItemFlex = 2;
   final int defaultItemLongFlex = 5;
   final ValueNotifier<int> _valueNotifier = ValueNotifier(-1);
+  final ScrollController _scrollController = ScrollController();
+  final ScrollController _columnTitleController = ScrollController();
 
-  int _lastSelected = -1;
+  set selected(int index) {
+    _valueNotifier.value = index;
+  }
 
-  int _getFlex(String name) {
-    if (name == IEmployee.column_identifyId || name == IEmployee.column_phone) {
-      return defaultItemLongFlex;
-    }
-    return defaultItemFlex;
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      // print("offset: ${_scrollController.offset}");
+      _columnTitleController.jumpTo(_scrollController.offset);
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _columnTitleController.dispose();
+    super.dispose();
   }
 
   @override
@@ -46,6 +59,13 @@ class _EmployeeTableState extends State<EmployeeTable> {
         ),
       )
     ]);
+  }
+
+  int _getFlex(String name) {
+    if (name == IEmployee.column_identifyId || name == IEmployee.column_phone) {
+      return defaultItemLongFlex;
+    }
+    return defaultItemFlex;
   }
 
   Widget _buildRowTitle() => Row(children: [
@@ -70,6 +90,8 @@ class _EmployeeTableState extends State<EmployeeTable> {
   Widget _buildColumnIndex() => SizedBox(
       width: 40,
       child: ListView.separated(
+        physics: const NeverScrollableScrollPhysics(),
+        controller: _columnTitleController,
         itemBuilder: (context, index) => _titleCell(
           name: "$index",
           width: 40,
@@ -80,8 +102,32 @@ class _EmployeeTableState extends State<EmployeeTable> {
         itemCount: widget.list.length,
       ));
 
+  Widget _titleCell({
+    required String name,
+    double? width,
+    double? height,
+    Color? bgColor,
+  }) {
+    final child = Center(
+      child: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
+    );
+    if (width != null && width > 0 && height != null && height > 0) {
+      return Container(
+        alignment: Alignment.center,
+        width: width,
+        height: height,
+        color: bgColor,
+        child: child,
+      );
+    }
+    return child;
+  }
+
+  int _lastSelected = -1;
+
   Widget _buildContent() => ListView.separated(
       scrollDirection: Axis.vertical,
+      controller: _scrollController,
       itemBuilder: (context, index) {
         final Employee employee = widget.list[index];
         return InkWell(
@@ -98,6 +144,11 @@ class _EmployeeTableState extends State<EmployeeTable> {
             print("tap: current=$index, last=$_lastSelected");
           },
           onDoubleTap: () {
+            if (_valueNotifier.value != index) {
+              _lastSelected = _valueNotifier.value;
+            }
+            _valueNotifier.value = index;
+            print("tap: current=$index, last=$_lastSelected");
             widget.callback(employee);
           },
           child: ValueListenableBuilder(
@@ -148,27 +199,6 @@ class _EmployeeTableState extends State<EmployeeTable> {
       },
       separatorBuilder: (context, index) => const Divider(height: 1.0, color: Colors.grey),
       itemCount: widget.list.length);
-
-  Widget _titleCell({
-    required String name,
-    double? width,
-    double? height,
-    Color? bgColor,
-  }) {
-    final child = Center(
-      child: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
-    );
-    if (width != null && width > 0 && height != null && height > 0) {
-      return Container(
-        alignment: Alignment.center,
-        width: width,
-        height: height,
-        color: bgColor,
-        child: child,
-      );
-    }
-    return child;
-  }
 }
 
 typedef ItemFlexBuilder = int Function(String item);
