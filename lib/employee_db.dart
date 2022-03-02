@@ -5,7 +5,6 @@ import 'package:desktop_demo/database/search.dart';
 import 'package:desktop_demo/database/table.dart';
 import 'package:desktop_demo/dialog.dart';
 import 'package:desktop_demo/routers.dart';
-import 'package:desktop_demo/sample_data.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
@@ -27,12 +26,12 @@ class _EmployeeDatabaseState extends State<EmployeeDatabase> {
     Future.sync(() async {
       final result = (await _provider.query()).data!;
       _valueNotifier.value = result;
-      if (result.isEmpty) {
-        /// test code! when database is empty, insert data
-        for (var element in sampleEmployeeList) {
-          _provider.insert(element);
-        }
-      }
+      // if (result.isEmpty) {
+      //   /// test code! when database is empty, insert data
+      //   for (var element in sampleEmployeeList) {
+      //     _provider.insert(element);
+      //   }
+      // }
     });
   }
 

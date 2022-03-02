@@ -26,4 +26,17 @@ class SqlHelper {
   }
 
   static List<String> values(Employee employee, List<String> filters) => employee.getValues(filters);
+
+  static String? orderBy(List<String>? orders, bool asc) {
+    if (orders == null || orders.isEmpty) return null;
+    StringBuffer buffer = StringBuffer();
+    buffer.writeAll(orders, ", ");
+    buffer.write(" ");
+    if (asc) {
+      buffer.write("ASC");
+    } else {
+      buffer.write("DESC");
+    }
+    return buffer.toString();
+  }
 }

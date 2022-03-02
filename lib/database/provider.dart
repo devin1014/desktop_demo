@@ -121,9 +121,17 @@ class DatabaseProvider {
     });
   }
 
-  Future<Result<List<Employee>>> query() {
+  Future<Result<List<Employee>>> query({
+    String groupBy = "id",
+    List<String>? orderByList,
+    bool asc = true,
+  }) {
     return _databaseFuture.then((database) async {
-      List<Map<String, dynamic>> result = await database.query(_tableName);
+      List<Map<String, dynamic>> result = await database.query(
+        _tableName,
+        groupBy: groupBy,
+        orderBy: SqlHelper.orderBy(orderByList, asc),
+      );
       final list = result.map((e) => Employee.fromJson(e)).toList();
       if (list.isNotEmpty) {
         return Result.success(data: list, message: Message.querySuccess);
