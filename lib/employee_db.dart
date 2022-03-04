@@ -26,12 +26,6 @@ class _EmployeeDatabaseState extends State<EmployeeDatabase> {
     Future.sync(() async {
       final result = (await _provider.query()).data!;
       _valueNotifier.value = result;
-      // if (result.isEmpty) {
-      //   /// test code! when database is empty, insert data
-      //   for (var element in sampleEmployeeList) {
-      //     _provider.insert(element);
-      //   }
-      // }
     });
   }
 
@@ -77,50 +71,29 @@ class _EmployeeDatabaseState extends State<EmployeeDatabase> {
     );
   }
 
-  static const _actionAddEmployee = 1;
-  static const _actionSearchEmployee = 2;
-  static const _importExcelFile = 3;
+  static const _actionAdd = 1;
+  static const _actionSearch = 2;
+  static const _actionImportExcel = 3;
+  static const _actionExportExcel = 4;
 
   Widget _buildToolbarAction(BuildContext pageContext) => PopupMenuButton(
         itemBuilder: (context) {
           return [
-            const PopupMenuItem(child: Text("添加"), value: _actionAddEmployee),
-            const PopupMenuItem(child: Text("查找"), value: _actionSearchEmployee),
-            const PopupMenuItem(child: Text("倒入Excel文件"), value: _importExcelFile),
+            const PopupMenuItem(child: Text("添加"), value: _actionAdd),
+            const PopupMenuItem(child: Text("查找"), value: _actionSearch),
+            const PopupMenuItem(child: Text("倒入Excel文件"), value: _actionImportExcel),
+            const PopupMenuItem(child: Text("倒出Excel文件"), value: _actionImportExcel),
           ];
         },
         onSelected: (value) async {
-          if (value == _actionAddEmployee) {
+          if (value == _actionAdd) {
             _insert(pageContext);
-          } else if (value == _actionSearchEmployee) {
-            DialogUtil.showCustomDialog(pageContext, const SearchEmployee()).then((result) {
-              if (result is Map) {
-                final key = result.keys.first;
-                final value = result.values.first;
-                bool find = false;
-                int index = 0;
-                for (var employee in _valueNotifier.value) {
-                  if (employee.get(key) == value) {
-                    find = true;
-                    break;
-                  }
-                  index++;
-                }
-                if (find) {
-                  _globalKey.currentState?.selected = index;
-                } else {
-                  ScaffoldMessenger.of(pageContext).showSnackBar(SnackBar(content: Text("没有找到，$key:$value")));
-                }
-              }
-            });
-          } else if (value == _importExcelFile) {
-            final excelFile = await FilePicker.platform.pickFiles(dialogTitle: "请选择Excel文件");
-            if (excelFile == null || excelFile.files.isEmpty) return;
-            final path = excelFile.files.first.path!;
-            // final bytes = File(path).readAsBytesSync();
-            // final decoder = SpreadsheetDecoder.decodeBytes(bytes, update: true);
-            // for (var table in decoder.tables.keys) {
-            // }
+          } else if (value == _actionSearch) {
+            _showSearchDialog(pageContext);
+          } else if (value == _actionImportExcel) {
+            _importExcel(pageContext);
+          } else if (value == _actionExportExcel) {
+            _exportExcel();
           }
         },
         iconSize: 32,
@@ -150,17 +123,47 @@ class _EmployeeDatabaseState extends State<EmployeeDatabase> {
     }
   }
 
-// void _update(Employee employee) async {
-// employee.set(IEmployee.column_note, "#${Random(DateTime.now().millisecondsSinceEpoch).nextInt(100)}");
-// final result = await _provider.update(employee);
-// if (result.code == ResultCode.success) {
-//   _valueNotifier.value = await _query();
-// }
-// }
-//
-// void _refresh() async {
-//   _valueNotifier.value = await _query();
-// }
-//
-// Future<List<Employee>> _query() async => (await _provider.query()).data!;
+  void _showSearchDialog(BuildContext pageContext) {
+    DialogUtil.showCustomDialog(pageContext, const SearchEmployee()).then((result) {
+      if (result is Map) {
+        final key = result.keys.first;
+        final value = result.values.first;
+        bool find = false;
+        int index = 0;
+        for (var employee in _valueNotifier.value) {
+          if (employee.get(key) == value) {
+            find = true;
+            break;
+          }
+          index++;
+        }
+        if (find) {
+          _globalKey.currentState?.selected = index;
+        } else {
+          ScaffoldMessenger.of(pageContext).showSnackBar(SnackBar(content: Text("没有找到，$key:$value")));
+        }
+      }
+    });
+  }
+
+  void _importExcel(BuildContext pageContext) async {
+    final excelFile = await FilePicker.platform.pickFiles(dialogTitle: "请选择Excel文件");
+    if (excelFile == null || excelFile.files.isEmpty) return;
+    final path = excelFile.files.first.path!;
+    Routers().push(
+      pageContext,
+      Routers.pageImport,
+      arguments: {"path": path},
+    ).then((value) async {
+      if (value is Result) {
+        if (value.code == ResultCode.success) {
+          _valueNotifier.value = (await _provider.query()).data!;
+        } else {
+          ScaffoldMessenger.of(pageContext).showSnackBar(SnackBar(content: Text(value.message)));
+        }
+      }
+    });
+  }
+
+  void _exportExcel() async {}
 }

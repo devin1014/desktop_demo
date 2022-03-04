@@ -11,6 +11,7 @@ class Routers {
   static const pageInsert = "pageInsert";
   static const pageUpdate = "pageUpdate";
   static const pageSearch = "pageSearch";
+  static const pageImport = "pageImport";
   static const pageParserExcel = "pageParserExcel";
 
   static const pageDropdownButton = "pageDropdownButton";

@@ -1,3 +1,4 @@
+import 'package:desktop_demo/database/import_excel.dart';
 import 'package:desktop_demo/database/insert_employee.dart';
 import 'package:desktop_demo/database/search.dart';
 import 'package:desktop_demo/excel/parser_excel.dart';
@@ -16,6 +17,7 @@ void main() async {
   Routers().register(Routers.pageDropdownMenu, const TextFieldDemo());
   Routers().register(Routers.pageTextField, const TextFieldDemo());
   Routers().register(Routers.pageSearch, const SearchEmployee());
+  Routers().register(Routers.pageImport, const ImportExcel());
   runApp(const MyApp());
 }
 
