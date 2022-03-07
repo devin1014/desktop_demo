@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:desktop_demo/database/employee.dart';
 import 'package:desktop_demo/database/provider.dart';
 import 'package:desktop_demo/database/result.dart';
@@ -10,7 +8,6 @@ import 'package:desktop_demo/excel/excel.dart';
 import 'package:desktop_demo/routers.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:spreadsheet_decoder/spreadsheet_decoder.dart';
 
 class EmployeeDatabase extends StatefulWidget {
   const EmployeeDatabase({Key? key}) : super(key: key);
@@ -169,27 +166,11 @@ class _EmployeeDatabaseState extends State<EmployeeDatabase> {
     });
   }
 
-  void _exportExcel() async {
-    final excelFile = await FilePicker.platform.saveFile(dialogTitle: "请选择导出的文件夹", fileName: "export.xlsx");
-    print("excelFile: $excelFile");
-    if (excelFile != null && excelFile.isNotEmpty) {
-      final file = File(excelFile);
-      if (!(await file.exists())) {
-        await file.create(recursive: true);
-      }
-      final decoder = SpreadsheetDecoder.decodeBytes(file.readAsBytesSync(), update: true);
-      ExcelUtil.clearExcel(decoder);
-      final list = _valueNotifier.value;
-      // final sheet = "Sheet${decoder.tables.length + 1}";
-      const sheet = "Sheet1";
-      const columns = IEmployee.columns;
-      ExcelUtil.addRow(decoder, sheet, IEmployee.columns);
-      for (var rowIndex = 0; rowIndex < list.length; rowIndex++) {
-        final employee = list[rowIndex];
-        ExcelUtil.addRow(decoder, sheet, employee.getValues(columns));
-      }
-      ExcelUtil.printExcel(decoder);
-      await file.writeAsBytes(decoder.encode());
-    }
+  void _exportExcel({String fileName = "export.xlsx"}) async {
+    final absPath = await FilePicker.platform.saveFile(
+      dialogTitle: "请选择导出的文件夹",
+      fileName: fileName,
+    );
+    ExcelUtil.createExcel(absPath, _valueNotifier.value);
   }
 }

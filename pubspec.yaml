@@ -38,7 +38,8 @@ dependencies:
   file_picker: ^4.3.2
   sqflite_common: ^2.2.0
   sqflite_common_ffi: ^2.1.0+2
-  spreadsheet_decoder: ^2.0.0
+  spreadsheet_decoder: ^2.0.0 #excel
+  syncfusion_flutter_xlsio: ^19.4.54-beta #excel
   shared_preferences: ^2.0.13
   logger: ^1.1.0
 
