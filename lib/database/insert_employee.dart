@@ -15,6 +15,7 @@ class _InsertEmployeePageState extends State<InsertEmployeePage> {
 
   final FocusScopeNode _focusScopeNode = FocusScopeNode();
   final List<GlobalKey<FormFieldState>> _textFieldKeys = [];
+  bool _updateEmployee = false;
 
   @override
   void initState() {
@@ -37,8 +38,10 @@ class _InsertEmployeePageState extends State<InsertEmployeePage> {
       }
     }
     _textFieldKeys.clear();
+    _updateEmployee = employee != null;
+    String title = _updateEmployee ? "更新人员信息" : "新增人员信息";
     return Scaffold(
-        appBar: AppBar(title: const Text("新增人员信息")),
+        appBar: AppBar(title: Text(title)),
         body: FocusScope(
           node: _focusScopeNode,
           child: Padding(
@@ -136,7 +139,7 @@ class _InsertEmployeePageState extends State<InsertEmployeePage> {
     if (_hasErrorField) return;
     final employee = Employee.fromValues(values);
     if (!employee.hasInvalidField) {
-      final result = await _provider.insert(employee);
+      final result = await (_updateEmployee ? _provider.update(employee) : _provider.insert(employee));
       Navigator.of(context).pop(result);
     } else {
       print("invalidFields: ${employee.invalidFields.toString()}");
@@ -186,23 +189,4 @@ class _InsertEmployeePageState extends State<InsertEmployeePage> {
       child: Padding(padding: const EdgeInsets.all(6), child: child),
     );
   }
-
-// Widget _buildDropDownButton(List<String> values, {int flex = 1}) {
-//   final items = values
-//       .map((e) => DropdownMenuItem<String>(
-//             child: Padding(padding: const EdgeInsets.symmetric(horizontal: 6), child: Text(e)),
-//           ))
-//       .toList(growable: false);
-//   return Expanded(
-//     flex: flex,
-//     child: DropdownButton(
-//       // value: values.first,
-//       items: items,
-//       selectedItemBuilder: (context) {
-//         return values.map((e) => Center(child: Text(e))).toList(growable: false);
-//       },
-//       onChanged: (value) {},
-//     ),
-//   );
-// }
 }
