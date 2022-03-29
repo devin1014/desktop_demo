@@ -1,7 +1,7 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:desktop_demo/database/message.dart';
-import 'package:desktop_demo/log.dart';
+import 'package:desktop_demo/database/log.dart';
 
 abstract class DbModel {
   final Map<String, String> _data = {};

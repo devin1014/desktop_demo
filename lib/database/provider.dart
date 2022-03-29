@@ -4,7 +4,7 @@ import 'package:desktop_demo/database/employee.dart';
 import 'package:desktop_demo/database/message.dart';
 import 'package:desktop_demo/database/result.dart';
 import 'package:desktop_demo/database/sql_helper.dart';
-import 'package:desktop_demo/log.dart';
+import 'package:desktop_demo/database/log.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';

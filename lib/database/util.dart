@@ -103,7 +103,7 @@ class EmployeeUtil {
 
 // 根据出生日期获取年龄
   int getAgeFromBirthday(String strBirthday) {
-    if (strBirthday == null || strBirthday.isEmpty) {
+    if (strBirthday.isEmpty) {
       print('生日错误');
       return 0;
     }

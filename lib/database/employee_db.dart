@@ -1,9 +1,9 @@
+import 'package:desktop_demo/database/dialog.dart';
 import 'package:desktop_demo/database/employee.dart';
 import 'package:desktop_demo/database/provider.dart';
 import 'package:desktop_demo/database/result.dart';
 import 'package:desktop_demo/database/search.dart';
 import 'package:desktop_demo/database/table.dart';
-import 'package:desktop_demo/dialog.dart';
 import 'package:desktop_demo/excel/excel.dart';
 import 'package:desktop_demo/routers.dart';
 import 'package:file_picker/file_picker.dart';
@@ -43,7 +43,6 @@ class _EmployeeDatabaseState extends State<EmployeeDatabase> {
       body: Column(
         children: [
           SizedBox(height: 64, child: _buildFilter()),
-          // const Divider(height: 1.0, color: Colors.grey),
           Expanded(
             child: ValueListenableBuilder<List<Employee>>(
               valueListenable: _valueNotifier,
@@ -96,12 +95,14 @@ class _EmployeeDatabaseState extends State<EmployeeDatabase> {
         onCanceled: () {},
       );
 
-  String? _filterType = null;
-  String? _filterCompany = null;
+  String? _filterType;
+  String? _filterCompany;
 
   Widget _buildFilter() {
     return Row(
       children: [
+        const SizedBox(width: 12),
+        const Text("筛选条件"),
         Filter(
           title: "分类",
           list: IEmployee.value_work_types,

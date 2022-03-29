@@ -1,10 +1,12 @@
 import 'dart:io';
 
-import 'package:desktop_demo/database/employee.dart';
 import 'package:desktop_demo/database/provider.dart';
 import 'package:desktop_demo/database/result.dart';
 import 'package:flutter/material.dart';
 import 'package:spreadsheet_decoder/spreadsheet_decoder.dart';
+
+import 'log.dart';
+import 'employee.dart';
 
 class ImportExcel extends StatefulWidget {
   const ImportExcel({Key? key}) : super(key: key);
@@ -14,6 +16,7 @@ class ImportExcel extends StatefulWidget {
 }
 
 class _ImportExcelState extends State<ImportExcel> {
+  final ILog logger = ILog.get("ImportExcel");
   String path = "";
 
   @override
@@ -24,7 +27,7 @@ class _ImportExcelState extends State<ImportExcel> {
   @override
   Widget build(BuildContext context) {
     final argument = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
-    print("argument: $argument");
+    logger.i("argument: $argument");
     path = argument["path"];
     return Scaffold(
       appBar: AppBar(title: const Text("import")),
@@ -63,9 +66,9 @@ class _ImportExcelState extends State<ImportExcel> {
     final decoder = SpreadsheetDecoder.decodeBytes(bytes, update: true);
     for (var _key in decoder.tables.keys) {
       SpreadsheetTable table = decoder.tables[_key]!;
-      print("table:${table.name}, maxCols:${table.maxCols}, maxRows:${table.maxRows}");
+      logger.i("table:${table.name}, maxCols:${table.maxCols}, maxRows:${table.maxRows}");
       for (int row = 1; row < table.maxRows; row++) {
-        print(table.rows[row]);
+        logger.i(table.rows[row].toString());
         final values = table.rows[row].map((e) => e?.toString() ?? "").toList(growable: false);
         await provider.insert(Employee.fromValues(values));
       }

@@ -1,6 +1,7 @@
 import 'package:desktop_demo/database/employee.dart';
 import 'package:desktop_demo/database/provider.dart';
 import 'package:desktop_demo/database/util.dart';
+import 'package:desktop_demo/database/log.dart';
 import 'package:flutter/material.dart';
 
 class InsertEmployeePage extends StatefulWidget {
@@ -11,6 +12,7 @@ class InsertEmployeePage extends StatefulWidget {
 }
 
 class _InsertEmployeePageState extends State<InsertEmployeePage> {
+  final ILog logger = ILog.get("InsertEmployee");
   final DatabaseProvider _provider = DatabaseProvider();
 
   final FocusScopeNode _focusScopeNode = FocusScopeNode();
@@ -135,14 +137,14 @@ class _InsertEmployeePageState extends State<InsertEmployeePage> {
     _hasErrorField = false;
     _textFieldKeys.forEach(validateField);
     final values = _textFieldKeys.map<String>((e) => e.currentState?.value ?? "").toList(growable: false);
-    print("list: $values");
+    logger.i("list: $values");
     if (_hasErrorField) return;
     final employee = Employee.fromValues(values);
     if (!employee.hasInvalidField) {
       final result = await (_updateEmployee ? _provider.update(employee) : _provider.insert(employee));
       Navigator.of(context).pop(result);
     } else {
-      print("invalidFields: ${employee.invalidFields.toString()}");
+      logger.i("invalidFields: ${employee.invalidFields.toString()}");
     }
   }
 

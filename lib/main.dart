@@ -6,7 +6,7 @@ import 'package:desktop_demo/routers.dart';
 import 'package:desktop_demo/test_widget.dart';
 import 'package:flutter/material.dart';
 
-import 'employee_db.dart';
+import 'database/employee_db.dart';
 
 void main() async {
   Routers().register(Routers.pageEmployee, const EmployeeDatabase());
@@ -30,29 +30,15 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Desktop Demo',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: Scaffold(
-          appBar: AppBar(title: const Text("Demo")),
+          appBar: AppBar(title: const Text("人员信息库")),
           body: Builder(builder: (context) {
             return Padding(
               padding: const EdgeInsets.all(6),
-              child: Column(
-                children: [
-                  TextButton(
-                      onPressed: () => Routers().push(context, Routers.pageParserExcel),
-                      child: const Text("Excel Parser")),
-                  TextButton(
-                    onPressed: () => Routers().push(context, Routers.pageEmployee),
-                    child: const Text("Employee Database"),
-                  ),
-                  TextButton(
-                      onPressed: () => Routers().push(context, Routers.pageDropdownButton),
-                      child: const Text("DropdownButton")),
-                  TextButton(
-                      onPressed: () => Routers().push(context, Routers.pageDropdownMenu),
-                      child: const Text("PopupMenuButton")),
-                  TextButton(
-                      onPressed: () => Routers().push(context, Routers.pageTextField),
-                      child: const Text("TextFieldDemo")),
-                ],
+              child: InkWell(
+                onTap: () => Routers().push(context, Routers.pageEmployee),
+                child: const Center(
+                  child: Text("欢迎使用", style: TextStyle(fontSize: 24)),
+                ),
               ),
             );
           })),

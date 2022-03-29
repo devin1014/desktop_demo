@@ -1,4 +1,4 @@
-import 'package:desktop_demo/log.dart';
+import 'package:desktop_demo/database/log.dart';
 import 'package:flutter/foundation.dart';
 
 class ResultCode {
