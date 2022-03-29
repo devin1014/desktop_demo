@@ -5,10 +5,11 @@ import 'package:desktop_demo/database/search.dart';
 import 'package:desktop_demo/database/table.dart';
 import 'package:desktop_demo/dialog.dart';
 import 'package:desktop_demo/excel/excel.dart';
-import 'package:desktop_demo/filter.dart';
 import 'package:desktop_demo/routers.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+
+import 'filter.dart';
 
 class EmployeeDatabase extends StatefulWidget {
   const EmployeeDatabase({Key? key}) : super(key: key);
@@ -41,23 +42,7 @@ class _EmployeeDatabaseState extends State<EmployeeDatabase> {
       ),
       body: Column(
         children: [
-          SizedBox(
-            height: 64,
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 196,
-                  child: Filter(
-                    title: "分类",
-                    list: IEmployee.value_work_types,
-                    valueChanged: (changed) {
-                      _query(type: changed);
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
+          SizedBox(height: 64, child: _buildFilter()),
           // const Divider(height: 1.0, color: Colors.grey),
           Expanded(
             child: ValueListenableBuilder<List<Employee>>(
@@ -110,6 +95,33 @@ class _EmployeeDatabaseState extends State<EmployeeDatabase> {
         iconSize: 32,
         onCanceled: () {},
       );
+
+  String? _filterType = null;
+  String? _filterCompany = null;
+
+  Widget _buildFilter() {
+    return Row(
+      children: [
+        Filter(
+          title: "分类",
+          list: IEmployee.value_work_types,
+          valueChanged: (changed) {
+            _filterType = changed;
+            _query();
+          },
+        ),
+        VerticalDivider(width: 1, thickness: 1, indent: 12, endIndent: 12, color: Colors.grey.shade300),
+        Filter(
+          title: "公司部门",
+          list: IEmployee.value_companion,
+          valueChanged: (changed) {
+            _filterCompany = changed;
+            _query();
+          },
+        ),
+      ],
+    );
+  }
 
   void _insert(BuildContext pageContext, {Employee? employee}) {
     Routers().push(
@@ -184,7 +196,11 @@ class _EmployeeDatabaseState extends State<EmployeeDatabase> {
     ExcelUtil.createExcel(absPath, _valueNotifier.value);
   }
 
-  void _query({String? type}) async {
-    _valueNotifier.value = (await _provider.query(type: type)).data!;
+  void _query() async {
+    _valueNotifier.value = (await _provider.query(
+      type: _filterType,
+      company: _filterCompany,
+    ))
+        .data!;
   }
 }

@@ -39,4 +39,35 @@ class SqlHelper {
     }
     return buffer.toString();
   }
+
+  static String? buildWhereSql(List<String?>? input) {
+    final List<String>? list = _removeNullItem(input);
+    if (list == null || list.isEmpty) return null;
+    const and = "AND";
+    StringBuffer buffer = StringBuffer();
+    for (var element in list) {
+      if (buffer.isNotEmpty) buffer.write(" $and ");
+      buffer.write("$element = ?");
+    }
+    return buffer.toString();
+  }
+
+  static List<String>? buildWhereValue(List<String?>? input) {
+    final List<String>? list = _removeNullItem(input);
+    if (list == null || list.isEmpty) return null;
+    return list;
+  }
+
+  static List<String>? _removeNullItem(List<String?>? list) {
+    if (list != null && list.isNotEmpty) {
+      final List<String> data = [];
+      for (var element in list) {
+        if (element != null) {
+          data.add(element);
+        }
+      }
+      return data;
+    }
+    return null;
+  }
 }

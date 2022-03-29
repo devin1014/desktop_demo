@@ -123,16 +123,18 @@ class DatabaseProvider {
 
   Future<Result<List<Employee>>> query({
     String? type,
-    String groupBy = "id",
+    String? company,
     List<String>? orderByList,
     bool asc = true,
   }) {
     return _databaseFuture.then((database) async {
       List<Map<String, dynamic>> result = await database.query(
         _tableName,
-        where: type != null ? "${IEmployee.column_type} = ?" : null,
-        whereArgs: type != null ? [type] : null,
-        groupBy: groupBy,
+        where: SqlHelper.buildWhereSql([
+          type != null ? IEmployee.column_type : null,
+          company != null ? IEmployee.column_company : null,
+        ]),
+        whereArgs: SqlHelper.buildWhereValue([type, company]),
         orderBy: SqlHelper.orderBy(orderByList, asc),
       );
       final list = result.map((e) => Employee.fromJson(e)).toList();

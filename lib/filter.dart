@@ -27,6 +27,7 @@ class _FilterState extends State<Filter> {
   Widget build(BuildContext context) {
     return Row(
       children: [
+        const SizedBox(width: 12),
         Text(widget.title),
         const SizedBox(width: 12),
         DropdownButton(
@@ -45,6 +46,7 @@ class _FilterState extends State<Filter> {
                 widget.valueChanged(changed);
               }
             }),
+        const SizedBox(width: 12),
       ],
     );
   }
