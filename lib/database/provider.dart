@@ -122,6 +122,7 @@ class DatabaseProvider {
   }
 
   Future<Result<List<Employee>>> query({
+    String? type,
     String groupBy = "id",
     List<String>? orderByList,
     bool asc = true,
@@ -129,6 +130,8 @@ class DatabaseProvider {
     return _databaseFuture.then((database) async {
       List<Map<String, dynamic>> result = await database.query(
         _tableName,
+        where: type != null ? "${IEmployee.column_type} = ?" : null,
+        whereArgs: type != null ? [type] : null,
         groupBy: groupBy,
         orderBy: SqlHelper.orderBy(orderByList, asc),
       );

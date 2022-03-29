@@ -93,7 +93,7 @@ class EmployeeTableState extends State<EmployeeTable> {
         physics: const NeverScrollableScrollPhysics(),
         controller: _columnTitleController,
         itemBuilder: (context, index) => _titleCell(
-          name: "$index",
+          name: "${index + 1}",
           width: 40,
           height: _itemHeight,
           bgColor: Colors.blueGrey,

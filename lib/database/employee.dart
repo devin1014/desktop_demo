@@ -85,6 +85,25 @@ mixin IEmployee on DbModel {
   static const value_genders = ["男", "女"];
   static const value_yes_or_no = ["是", "否"];
   static const value_work_types = ["正式", "劳务派遣", "借调", "退休返聘", "实习", "其他"];
+  static const value_companion = [
+    "城建置业",
+    "益恒置业",
+    "益欣置业",
+    "瑞恒置业",
+    "瑞腾国际",
+    "博远置业",
+    "瑞南置业",
+    "丰鑫置业",
+    "黄山合城",
+    "宝盛",
+    "建房处",
+    "后勤保障",
+    "城建物业",
+    "瑞行东岸",
+    "无锡公司",
+    "蠡湖公司",
+    "江西公司"
+  ];
   static const _format_phone_length = 11;
   static const _format_identify_id_length = 18;
 

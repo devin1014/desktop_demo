@@ -5,6 +5,7 @@ import 'package:desktop_demo/database/search.dart';
 import 'package:desktop_demo/database/table.dart';
 import 'package:desktop_demo/dialog.dart';
 import 'package:desktop_demo/excel/excel.dart';
+import 'package:desktop_demo/filter.dart';
 import 'package:desktop_demo/routers.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -41,10 +42,19 @@ class _EmployeeDatabaseState extends State<EmployeeDatabase> {
       body: Column(
         children: [
           SizedBox(
-            height: 32,
+            height: 64,
             child: Row(
               children: [
-                //TODO
+                SizedBox(
+                  width: 196,
+                  child: Filter(
+                    title: "分类",
+                    list: IEmployee.value_work_types,
+                    valueChanged: (changed) {
+                      _query(type: changed);
+                    },
+                  ),
+                ),
               ],
             ),
           ),
@@ -172,5 +182,9 @@ class _EmployeeDatabaseState extends State<EmployeeDatabase> {
       fileName: fileName,
     );
     ExcelUtil.createExcel(absPath, _valueNotifier.value);
+  }
+
+  void _query({String? type}) async {
+    _valueNotifier.value = (await _provider.query(type: type)).data!;
   }
 }
