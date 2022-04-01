@@ -1,10 +1,10 @@
 // ignore_for_file: avoid_print
 
 import 'package:desktop_demo/database/employee.dart';
+import 'package:desktop_demo/database/log.dart';
 import 'package:desktop_demo/database/message.dart';
 import 'package:desktop_demo/database/result.dart';
 import 'package:desktop_demo/database/sql_helper.dart';
-import 'package:desktop_demo/database/log.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -124,6 +124,8 @@ class DatabaseProvider {
   Future<Result<List<Employee>>> query({
     String? type,
     String? company,
+    String? department,
+    String? union,
     List<String>? orderByList,
     bool asc = true,
   }) {
@@ -133,8 +135,10 @@ class DatabaseProvider {
         where: SqlHelper.buildWhereSql([
           type != null ? IEmployee.column_type : null,
           company != null ? IEmployee.column_company : null,
+          department != null ? IEmployee.column_department : null,
+          union != null ? IEmployee.column_union : null,
         ]),
-        whereArgs: SqlHelper.buildWhereValue([type, company]),
+        whereArgs: SqlHelper.buildWhereValue([type, company, department, union]),
         orderBy: SqlHelper.orderBy(orderByList, asc),
       );
       final list = result.map((e) => Employee.fromJson(e)).toList();

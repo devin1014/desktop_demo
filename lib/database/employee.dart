@@ -1,7 +1,7 @@
 // ignore_for_file: constant_identifier_names
 
-import 'package:desktop_demo/database/message.dart';
 import 'package:desktop_demo/database/log.dart';
+import 'package:desktop_demo/database/message.dart';
 
 abstract class DbModel {
   final Map<String, String> _data = {};
@@ -60,11 +60,11 @@ mixin IEmployee on DbModel {
   static const column_identifyId = "证件号码";
   static const column_gender = "性别";
   static const column_phone = "手机";
+
   static const column_type = "类型";
-  static const column_social = "社保";
   static const column_company = "公司";
-  static const column_departments = "部门";
-  static const column_unionName = "工会";
+  static const column_department = "部门";
+  static const column_union = "工会";
   static const column_note = "备注";
 
   static const List<String> columns = [
@@ -74,16 +74,14 @@ mixin IEmployee on DbModel {
     column_gender,
     column_phone,
     column_type,
-    column_social,
     column_company,
-    column_departments,
-    column_unionName,
+    column_department,
+    column_union,
     column_note
   ];
 
   static const value_identify_types = ["身份证"];
   static const value_genders = ["男", "女"];
-  static const value_yes_or_no = ["是", "否"];
   static const value_work_types = ["正式", "劳务派遣", "借调", "退休返聘", "实习", "其他"];
   static const value_companion = [
     "城建置业",
@@ -104,6 +102,8 @@ mixin IEmployee on DbModel {
     "蠡湖公司",
     "江西公司"
   ];
+  static const value_department = ["人事", "综合办", "销售", "财务", "物业"];
+  static const value_unions = ["本部工会", "大居工会", "第一项目联合工会", "第二项目联合工会", "无锡工会", "江西工会"];
   static const _format_phone_length = 11;
   static const _format_identify_id_length = 18;
 
@@ -125,9 +125,11 @@ mixin IEmployee on DbModel {
 
     if (key == column_gender && !contains(value_genders, value)) {
       return false;
-    } else if (key == column_social && !contains(value_yes_or_no, value)) {
-      return false;
-    } else if (key == column_type && !contains(value_work_types, value)) {
+    }
+    // else if (key == column_social && !contains(value_yes_or_no, value)) {
+    //   return false;
+    // }
+    else if (key == column_type && !contains(value_work_types, value)) {
       return false;
     } else if (key == column_phone && !checkLength(value, _format_phone_length)) {
       return false;
@@ -157,24 +159,11 @@ class Employee extends DbModel with IEmployee {
     String gender,
     String phone,
     String type,
-    String hasSocialSecurity,
     String company,
     String departments,
     String unionName,
     String note,
-  ) : this.fromValues([
-          name,
-          identifyType,
-          identifyId,
-          gender,
-          phone,
-          type,
-          hasSocialSecurity,
-          company,
-          departments,
-          unionName,
-          note
-        ]);
+  ) : this.fromValues([name, identifyType, identifyId, gender, phone, type, company, departments, unionName, note]);
 
   @override
   String get uniqueId => "${get(IEmployee.column_name)}@${get(IEmployee.column_phone)}";

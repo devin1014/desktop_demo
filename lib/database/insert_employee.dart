@@ -1,7 +1,7 @@
 import 'package:desktop_demo/database/employee.dart';
+import 'package:desktop_demo/database/log.dart';
 import 'package:desktop_demo/database/provider.dart';
 import 'package:desktop_demo/database/util.dart';
-import 'package:desktop_demo/database/log.dart';
 import 'package:flutter/material.dart';
 
 class InsertEmployeePage extends StatefulWidget {
@@ -73,15 +73,15 @@ class _InsertEmployeePageState extends State<InsertEmployeePage> {
                     child: Row(children: [
                       _buildTextField(IEmployee.column_type, "[正式、劳务派遣、退休返聘、借调、实习、其他]",
                           defaultValue: employee?.get(IEmployee.column_type), validators: [_emptyValueValidator]),
-                      _buildTextField(IEmployee.column_social, "[是/否]",
-                          defaultValue: employee?.get(IEmployee.column_social), validators: [_emptyValueValidator]),
+                      // _buildTextField(IEmployee.column_social, "[是/否]",
+                      //     defaultValue: employee?.get(IEmployee.column_social), validators: [_emptyValueValidator]),
                       _buildTextField(IEmployee.column_company, "请输入公司名称",
                           defaultValue: employee?.get(IEmployee.column_company), validators: [_emptyValueValidator]),
-                      _buildTextField(IEmployee.column_departments, "请输入工作部门",
-                          defaultValue: employee?.get(IEmployee.column_departments),
+                      _buildTextField(IEmployee.column_department, "请输入工作部门",
+                          defaultValue: employee?.get(IEmployee.column_department),
                           validators: [_emptyValueValidator]),
-                      _buildTextField(IEmployee.column_unionName, "如参加工会，请填写工会名称",
-                          defaultValue: employee?.get(IEmployee.column_unionName)),
+                      _buildTextField(IEmployee.column_union, "如参加工会，请填写工会名称",
+                          defaultValue: employee?.get(IEmployee.column_union)),
                     ]),
                   ),
                   SizedBox(

@@ -19,8 +19,6 @@ class EmployeeTable extends StatefulWidget {
 
 class EmployeeTableState extends State<EmployeeTable> {
   static const _itemHeight = 36.0;
-  final int defaultItemFlex = 2;
-  final int defaultItemLongFlex = 5;
   final ValueNotifier<int> _valueNotifier = ValueNotifier(-1);
   final ScrollController _scrollController = ScrollController();
   final ScrollController _columnTitleController = ScrollController();
@@ -61,11 +59,18 @@ class EmployeeTableState extends State<EmployeeTable> {
     ]);
   }
 
+  static const int defaultItemFlex = 2;
+
   int _getFlex(String name) {
-    if (name == IEmployee.column_identifyId || name == IEmployee.column_phone) {
-      return defaultItemLongFlex;
+    if (name == IEmployee.column_identifyId) {
+      return 5;
+    } else if (name == IEmployee.column_phone) {
+      return 4;
+    } else if (name == IEmployee.column_gender) {
+      return 1;
+    } else {
+      return defaultItemFlex;
     }
-    return defaultItemFlex;
   }
 
   Widget _buildRowTitle() => Row(children: [

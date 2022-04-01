@@ -14,8 +14,8 @@ class _SearchEmployeeState extends State<SearchEmployee> {
     IEmployee.column_identifyId,
     IEmployee.column_phone,
     IEmployee.column_company,
-    IEmployee.column_departments,
-    IEmployee.column_unionName,
+    IEmployee.column_department,
+    IEmployee.column_union,
   ];
 
   final TextEditingController _editingController = TextEditingController();

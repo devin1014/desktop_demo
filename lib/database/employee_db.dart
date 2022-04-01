@@ -97,14 +97,16 @@ class _EmployeeDatabaseState extends State<EmployeeDatabase> {
 
   String? _filterType;
   String? _filterCompany;
+  String? _filterDepartment;
+  String? _filterUnion;
 
   Widget _buildFilter() {
     return Row(
       children: [
         const SizedBox(width: 12),
-        const Text("筛选条件"),
+        const Text("筛选条件："),
         Filter(
-          title: "分类",
+          title: "类型",
           list: IEmployee.value_work_types,
           valueChanged: (changed) {
             _filterType = changed;
@@ -113,10 +115,28 @@ class _EmployeeDatabaseState extends State<EmployeeDatabase> {
         ),
         VerticalDivider(width: 1, thickness: 1, indent: 12, endIndent: 12, color: Colors.grey.shade300),
         Filter(
-          title: "公司部门",
+          title: "公司",
           list: IEmployee.value_companion,
           valueChanged: (changed) {
             _filterCompany = changed;
+            _query();
+          },
+        ),
+        VerticalDivider(width: 1, thickness: 1, indent: 12, endIndent: 12, color: Colors.grey.shade300),
+        Filter(
+          title: "部门",
+          list: IEmployee.value_department,
+          valueChanged: (changed) {
+            _filterDepartment = changed;
+            _query();
+          },
+        ),
+        VerticalDivider(width: 1, thickness: 1, indent: 12, endIndent: 12, color: Colors.grey.shade300),
+        Filter(
+          title: "工会",
+          list: IEmployee.value_unions,
+          valueChanged: (changed) {
+            _filterUnion = changed;
             _query();
           },
         ),
@@ -201,6 +221,8 @@ class _EmployeeDatabaseState extends State<EmployeeDatabase> {
     _valueNotifier.value = (await _provider.query(
       type: _filterType,
       company: _filterCompany,
+      department: _filterDepartment,
+      union: _filterUnion,
     ))
         .data!;
   }
