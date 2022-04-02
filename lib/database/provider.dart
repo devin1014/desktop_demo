@@ -103,6 +103,19 @@ class DatabaseProvider {
     });
   }
 
+  Future<Result<void>> deleteAll() {
+    return _databaseFuture.then((database) async {
+      int rowId = await database.delete(_tableName);
+      if (rowId > 0) {
+        return Result.success(message: Message.deleteSuccess);
+      } else {
+        return Result.failed(message: Message.deleteFailed);
+      }
+    }).catchError((onError) {
+      return Result.error(message: "${Message.error}: $onError");
+    });
+  }
+
   Future<Result<void>> update(Employee employee) {
     return _databaseFuture.then((database) async {
       final rowId = await database.update(

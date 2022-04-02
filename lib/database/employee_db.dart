@@ -68,6 +68,7 @@ class _EmployeeDatabaseState extends State<EmployeeDatabase> {
 
   static const _actionAdd = 1;
   static const _actionSearch = 2;
+  static const _actionDeleteAll = 5;
   static const _actionImportExcel = 3;
   static const _actionExportExcel = 4;
 
@@ -76,6 +77,7 @@ class _EmployeeDatabaseState extends State<EmployeeDatabase> {
           return [
             const PopupMenuItem(child: Text("添加"), value: _actionAdd),
             const PopupMenuItem(child: Text("查找"), value: _actionSearch),
+            const PopupMenuItem(child: Text("删除所有"), value: _actionDeleteAll),
             const PopupMenuItem(child: Text("倒入Excel文件"), value: _actionImportExcel),
             const PopupMenuItem(child: Text("倒出Excel文件"), value: _actionExportExcel),
           ];
@@ -85,6 +87,8 @@ class _EmployeeDatabaseState extends State<EmployeeDatabase> {
             _insert(pageContext);
           } else if (value == _actionSearch) {
             _showSearchDialog(pageContext);
+          } else if (value == _actionDeleteAll) {
+            _delete(null);
           } else if (value == _actionImportExcel) {
             _importExcel(pageContext);
           } else if (value == _actionExportExcel) {
@@ -160,8 +164,13 @@ class _EmployeeDatabaseState extends State<EmployeeDatabase> {
     });
   }
 
-  void _delete(Employee employee) async {
-    final result = await _provider.delete(employee);
+  void _delete(Employee? employee) async {
+    final Result<void> result;
+    if (employee != null) {
+      result = await _provider.delete(employee);
+    } else {
+      result = await _provider.deleteAll();
+    }
     if (result.code == ResultCode.success) {
       _valueNotifier.value = (await _provider.query()).data!;
     }
