@@ -66,6 +66,8 @@ class EmployeeTableState extends State<EmployeeTable> {
       return 5;
     } else if (name == IEmployee.column_phone) {
       return 4;
+    } else if (name == IEmployee.column_union) {
+      return 4;
     } else if (name == IEmployee.column_gender) {
       return 1;
     } else {

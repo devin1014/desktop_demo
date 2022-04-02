@@ -28,7 +28,7 @@ class _FilterState extends State<Filter> {
     return Row(
       children: [
         const SizedBox(width: 12),
-        Text(widget.title),
+        Text(widget.title, style: const TextStyle(fontWeight: FontWeight.bold)),
         const SizedBox(width: 12),
         DropdownButton(
             alignment: Alignment.center,

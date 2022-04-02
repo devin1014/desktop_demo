@@ -125,15 +125,17 @@ mixin IEmployee on DbModel {
 
     if (key == column_gender && !contains(value_genders, value)) {
       return false;
-    }
-    // else if (key == column_social && !contains(value_yes_or_no, value)) {
-    //   return false;
-    // }
-    else if (key == column_type && !contains(value_work_types, value)) {
+    } else if (key == column_type && !contains(value_work_types, value)) {
+      return false;
+    } else if (key == column_identifyId && !checkLength(value, _format_identify_id_length)) {
       return false;
     } else if (key == column_phone && !checkLength(value, _format_phone_length)) {
       return false;
-    } else if (key == column_identifyId && !checkLength(value, _format_identify_id_length)) {
+    } else if (key == column_company && !contains(value_companion, value)) {
+      return false;
+    } else if (key == column_department && !contains(value_department, value)) {
+      return false;
+    } else if (key == column_union && !contains(value_unions, value)) {
       return false;
     }
     return true;

@@ -108,7 +108,7 @@ class _EmployeeDatabaseState extends State<EmployeeDatabase> {
     return Row(
       children: [
         const SizedBox(width: 12),
-        const Text("筛选条件："),
+        const Text("筛选条件：", style: TextStyle(fontWeight: FontWeight.bold)),
         Filter(
           title: "类型",
           list: IEmployee.value_work_types,
